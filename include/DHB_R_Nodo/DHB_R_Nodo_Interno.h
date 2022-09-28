@@ -2,9 +2,9 @@
 #define DYNAMIC_HILBERT_R_NODO_INTERNO_H
 
 #include "DHB_R_Nodo.h"
-#include "../Figura/MBR.h"
+#include "Entrada/Entrada_Interna.h"
 
-#include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -13,18 +13,9 @@ class DHB_R_Nodo_Interno: public DHB_R_Nodo
 public:
     DHB_R_Nodo_Interno();
 
-protected:
-
-    struct Entrada{
-        MBR Info;
-        DHB_R_Nodo* hijo;
-        int LHV; // Largest Hilbert Value
-    };
-
 private:
     friend class DHB_R_Tree;
-    vector<Entrada> entradas;
-
+    deque<Entrada_Interna> entradas;
 };
 
 #endif
