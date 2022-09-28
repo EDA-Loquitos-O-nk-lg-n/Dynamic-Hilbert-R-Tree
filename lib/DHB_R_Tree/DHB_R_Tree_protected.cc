@@ -29,6 +29,10 @@ DHB_R_Nodo_Hoja *DHB_R_Tree::escoger_hoja(const Punto &punto, const int &h)
 
 DHB_R_Nodo* DHB_R_Tree::manejar_desborde(DHB_R_Nodo*& N, const Punto& punto){
     if(N->hoja){
-        
+        DHB_R_Nodo_Hoja* N_h = dynamic_cast<DHB_R_Nodo_Hoja*>(N);
+        deque<Entrada_Hoja> entradas(N_h->entradas.begin(),  N_h->entradas.end());
+    }
+    else{
+
     }
 }
