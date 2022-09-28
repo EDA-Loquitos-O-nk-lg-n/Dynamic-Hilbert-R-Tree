@@ -4,7 +4,6 @@
 struct Entrada
 {
     int indice;
-    virtual ~Entrada() = 0;
 };
 
 
