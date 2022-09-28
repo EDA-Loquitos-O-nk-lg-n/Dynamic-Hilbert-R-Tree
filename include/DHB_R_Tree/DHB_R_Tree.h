@@ -2,6 +2,7 @@
 #define DYNAMIC_HILBERT_R_TREE_H
 
 #include<vector>
+#include<deque>
 #include"../Figura/Punto.h"
 #include "../DHB_R_Nodo/DHB_R_Nodo.h"
 #include "../DHB_R_Nodo/DHB_R_Nodo_Hoja.h"
