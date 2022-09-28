@@ -1,7 +1,7 @@
 #ifndef HILBERT_H
 #define HILBERT_H
 
-#include "../Punto/Punto.h"
+#include "../Figura/Punto.h"
 #include <algorithm>
 #include <utility>
 
