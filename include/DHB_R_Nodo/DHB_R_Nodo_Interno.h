@@ -4,18 +4,14 @@
 #include "DHB_R_Nodo.h"
 #include "Entrada/Entrada_Interna.h"
 
-#include <deque>
+#include <list>
 
 using namespace std;
 
-class DHB_R_Nodo_Interno: public DHB_R_Nodo
+struct DHB_R_Nodo_Interno: public DHB_R_Nodo
 {
-public:
     DHB_R_Nodo_Interno();
-
-private:
-    friend class DHB_R_Tree;
-    deque<Entrada_Interna> entradas;
+    list<Entrada_Interna> entradas;
 };
 
 #endif

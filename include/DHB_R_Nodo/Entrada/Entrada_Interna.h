@@ -3,9 +3,8 @@
 
 #include "../DHB_R_Nodo.h"
 #include "../../Figura/MBR.h"
-#include "Entrada.h"
 
-struct Entrada_Interna: public Entrada{
+struct Entrada_Interna{
     MBR Info;
     DHB_R_Nodo* hijo;
     int LHV; // Largest Hilbert Value

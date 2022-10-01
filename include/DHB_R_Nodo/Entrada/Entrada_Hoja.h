@@ -3,10 +3,9 @@
 
 #include "../DHB_R_Nodo.h"
 #include "../../Figura/Punto.h"
-#include "Entrada.h"
 #include <cstddef>
 
-struct Entrada_Hoja: public Entrada{
+struct Entrada_Hoja{
     Punto Info;
     nullptr_t id; // NO UTILIZADO
 };
