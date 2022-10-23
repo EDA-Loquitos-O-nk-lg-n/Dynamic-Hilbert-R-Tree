@@ -25,6 +25,7 @@ public:
 protected:
     DHB_R_Nodo_Hoja* escoger_hoja(const Punto& punto, const int& h);
     DHB_R_Nodo* manejar_desborde(DHB_R_Nodo*& N, const Punto& punto);
+    void ajustar_arbol(const list<DHB_R_Nodo*>& S);
 
 private:
     DHB_R_Nodo *raiz;

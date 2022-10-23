@@ -1,5 +1,11 @@
 #include "../../include/DHB_R_Tree/DHB_R_Tree.h"
 
+void DHB_R_Tree::ajustar_arbol(const list<DHB_R_Nodo*> &S){
+    if(*(S.begin()) == raiz) return;
+
+    DHB_R_Nodo_Interno* N_p = S
+}
+
 DHB_R_Nodo_Hoja *DHB_R_Tree::escoger_hoja(const Punto &punto, const int &h)
 {
     DHB_R_Nodo *N = raiz;
