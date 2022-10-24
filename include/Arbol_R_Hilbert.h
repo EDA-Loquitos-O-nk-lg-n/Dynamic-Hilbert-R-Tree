@@ -9,8 +9,11 @@
 #include"Entrada_Hoja.h"
 #include"Entrada_Interna.h"
 #include"Nodo.h"
+#include"Interfaz.h"
 
 using namespace std;
+
+class Interfaz;
 
 class Arbol_R_Hilbert{
 public:
@@ -33,6 +36,8 @@ protected:
 private:
     static bool comparar_entrada(Entrada* a, Entrada *b);
     Nodo* raiz;
+
+    friend class Interfaz;
 };
 
 #endif
