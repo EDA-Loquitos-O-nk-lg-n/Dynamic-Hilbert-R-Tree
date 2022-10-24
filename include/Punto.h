@@ -2,8 +2,7 @@
 #define PUNTO_H
 
 struct Punto{
-    int x;
-    int y;
+    int x, y;
 };
 
 #endif
