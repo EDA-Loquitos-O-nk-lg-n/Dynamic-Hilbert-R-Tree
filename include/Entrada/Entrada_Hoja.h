@@ -2,9 +2,9 @@
 #define ENTRADA_HOJA_H
 
 #include "Entrada.h"
-#include "Funciones_Hilbert.h"
-#include "Punto.h"
-#include "Constante.h"
+#include "../Funciones_Hilbert.h"
+#include "../Punto.h"
+#include "../Constante.h"
 #include<limits>
 #include<vector>
 

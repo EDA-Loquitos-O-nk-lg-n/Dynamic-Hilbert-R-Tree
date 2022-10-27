@@ -1,5 +1,44 @@
 #include "../../include/Arbol_R_Hilbert.h"
 
+Arbol_R_Hilbert::Distante::~Distante(){}
+
+Arbol_R_Hilbert::Distante::Distante(Entrada* E, Punto P, Nodo *N): entrada(E), nodo(N){
+    if(!N->hoja){
+        if(P.x >= E->intervalos[0].menor && P.x <= E->intervalos[0].mayor && P.y >= E->intervalos[1].menor && P.y <= E->intervalos[1].mayor)
+            distancia = 0;
+        else if(P.x >= E->intervalos[0].menor && P.x <= E->intervalos[0].mayor)
+            distancia = min(abs(P.y-E->intervalos[1].menor), abs(P.y-E->intervalos[1].mayor));
+        else if(P.y >= E->intervalos[1].menor && P.y <= E->intervalos[1].mayor)
+            distancia = min(abs(P.x-E->intervalos[0].menor), abs(P.x-E->intervalos[0].mayor));
+        else{
+            distancia = min(
+                sqrt(pow(P.y-E->intervalos[1].menor,2)+pow(P.x-E->intervalos[0].menor,2)), 
+                min(
+                    sqrt(pow(P.y-E->intervalos[1].mayor,2)+pow(P.x-E->intervalos[0].menor,2)), 
+                    min(
+                        sqrt(pow(P.y-E->intervalos[1].menor,2)+pow(P.x-E->intervalos[0].mayor,2)), 
+                        sqrt(pow(P.y-E->intervalos[1].mayor,2)+pow(P.x-E->intervalos[0].mayor,2))))
+                );
+        }
+    }
+    else{
+        Entrada_Hoja* EH = dynamic_cast<Entrada_Hoja*>(E);
+        if(EH->objeto.size() == 1){
+            distancia = sqrt(pow(P.x-EH->objeto[0].x,2)+pow(P.y-EH->objeto[0].y,2));
+        }
+        else{
+            double pm_x=0, pm_y=0;
+            for(auto p: EH->objeto){
+                pm_x+=p.x;
+                pm_y+=p.y;
+            }
+            pm_x/=EH->objeto.size();
+            pm_y/=EH->objeto.size();
+            distancia = sqrt(pow(P.x-pm_x,2)+pow(P.y-pm_y,2));
+        }
+    }
+}
+
 Arbol_R_Hilbert::Arbol_R_Hilbert(): raiz(new Nodo{true, nullptr}) {}
 
 Arbol_R_Hilbert::~Arbol_R_Hilbert() {
@@ -45,7 +84,6 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     // I2
     if(L->entradas.size() < M){
         L->entradas.insert(lower_bound(L->entradas.begin(),L->entradas.end(),r,comparar_entrada), r);
-        L->entradas.push_back(r);
     }
     else{
         partido = manejar_desborde(L, r);

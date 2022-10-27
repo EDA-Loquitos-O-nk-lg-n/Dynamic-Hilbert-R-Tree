@@ -1,7 +1,7 @@
 #ifndef ENTRADA_H
 #define ENTRADA_H
 
-#include "Intervalo.h"
+#include "../Intervalo.h"
 
 struct Entrada{
     Entrada();

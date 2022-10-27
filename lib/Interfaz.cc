@@ -1,17 +1,11 @@
 #include "../include/Interfaz.h"
 
-Interfaz::Interfaz(int wc, int hc, int we)
-    : width_canvas(wc), height_canvas(hc), width_ext(we), arbol_r(new Arbol_R_Hilbert)
-{
-    window.create(sf::VideoMode(width_canvas + width_ext, height_canvas), "R-TREE");
+Interfaz::Interfaz()
+: arbol_r(new Arbol_R_Hilbert){
+    window.create(sf::VideoMode(N, N), "R-TREE");
     if(!font.loadFromFile("../res/font/LemonMilk.otf")){
         cout<<"NO HUBO CARGA DE FUENTE"<<endl;
     }
-}
-
-bool Interfaz::inside_canvas(pair<int, int> coordenada)
-{
-    return coordenada.first > 0 && coordenada.second > 0 && coordenada.first < width_canvas && coordenada.second < height_canvas;
 }
 
 void Interfaz::ingresar_coordenada(sf::Event &event)
@@ -34,12 +28,8 @@ void Interfaz::ingresar_coordenada(sf::Event &event)
 
         sf::Vector2i localPosition = sf::Mouse::getPosition(window);
         pair<int, int> coordenada = {localPosition.x, int(window.getSize().y) - localPosition.y};
-
-        if (inside_canvas(coordenada))
-        {
-            cout << coordenada.first << '\t' << coordenada.second << endl;
-            arbol_r->insertar({{coordenada.first, coordenada.second}});
-        }
+        cout << coordenada.first << '\t' << coordenada.second << endl;
+        arbol_r->insertar({{coordenada.first, coordenada.second}});
         return;
     }
 }
@@ -71,12 +61,6 @@ void Interfaz::ingresar_poligono(sf::Event &event)
         {
             sf::Vector2i localPosition = sf::Mouse::getPosition(window);
             pair<int, int> coordenada = {localPosition.x, int(window.getSize().y) - localPosition.y};
-            if (!inside_canvas(coordenada) )
-            {
-                if (coordenadas.size() > 2)
-                    arbol_r->insertar(coordenadas);
-                return;
-            }
 
             coordenadas.push_back({coordenada.first, coordenada.second});
             cout << coordenada.first << '\t' << coordenada.second << endl;
@@ -109,11 +93,10 @@ void Interfaz::eliminar(sf::Event &event)
         sf::Vector2i localPosition = sf::Mouse::getPosition(window);
         pair<int, int> coordenada = {localPosition.x, int(window.getSize().y) - localPosition.y};
 
-        if (inside_canvas(coordenada))
-        {
-            cout << coordenada.first << '\t' << coordenada.second << endl;
-            arbol_r->eliminar({coordenada.first, coordenada.second});
-        }
+
+        cout << coordenada.first << '\t' << coordenada.second << endl;
+        arbol_r->eliminar({coordenada.first, coordenada.second});
+
         return;
     }
 }
@@ -180,26 +163,23 @@ void Interfaz::buscar_k_coordenadas(sf::Event& event){
         };
         linea[0].color = sf::Color::Green;
 
-        if (inside_canvas(coordenada))
-        {
-            cout << coordenada.first << '\t' << coordenada.second << endl;
-            vector<Arbol_R_Hilbert::Distante> k_vecinos = arbol_r->buscar({coordenada.first, coordenada.second}, k);
-            for(auto i: k_vecinos){
-                double pm_x=0, pm_y=0;
-                Entrada_Hoja* iEH = dynamic_cast<Entrada_Hoja*>(i.entrada);
-                for(auto p: iEH->objeto){
-                    pm_x+=p.x;
-                    pm_y+=p.y;
-                }
-                pm_x/=iEH->objeto.size();
-                pm_y/=iEH->objeto.size();
-                
-                linea[1] = sf::Vector2f(static_cast<int>(pm_x), window.getSize().y - static_cast<int>(pm_y));
-                linea[1].color = sf::Color::Green;
-                cout<<linea[1].position.x<<"  "<<linea[1].position.y<<endl;
-                window.draw(linea, 2, sf::Lines);
-                window.display();
+        cout << coordenada.first << '\t' << coordenada.second << endl;
+        vector<Arbol_R_Hilbert::Distante> k_vecinos = arbol_r->buscar({coordenada.first, coordenada.second}, k);
+        for(auto i: k_vecinos){
+            double pm_x=0, pm_y=0;
+            Entrada_Hoja* iEH = dynamic_cast<Entrada_Hoja*>(i.entrada);
+            for(auto p: iEH->objeto){
+                pm_x+=p.x;
+                pm_y+=p.y;
             }
+            pm_x/=iEH->objeto.size();
+            pm_y/=iEH->objeto.size();
+            
+            linea[1] = sf::Vector2f(static_cast<int>(pm_x), window.getSize().y - static_cast<int>(pm_y));
+            linea[1].color = sf::Color::Green;
+            cout<<linea[1].position.x<<"  "<<linea[1].position.y<<endl;
+            window.draw(linea, 2, sf::Lines);
+            window.display();
         }
         while(window.isOpen()){
             if (!window.pollEvent(event))
@@ -220,14 +200,6 @@ void Interfaz::buscar_k_coordenadas(sf::Event& event){
     }
 }
 
-void Interfaz::marco(){
-    sf::RectangleShape rect(sf::Vector2f(width_canvas, height_canvas));
-    rect.setOutlineColor(sf::Color::Magenta);
-    rect.setOutlineThickness(2);
-    rect.setFillColor(sf::Color::Transparent);
-    window.draw(rect);
-}
-
 void Interfaz::ejecutar()
 {
     while (window.isOpen())
@@ -235,7 +207,6 @@ void Interfaz::ejecutar()
         this->eventos();
 
         window.clear();
-        this->marco();
         imprimir_arbol_r();
         window.display();
     }

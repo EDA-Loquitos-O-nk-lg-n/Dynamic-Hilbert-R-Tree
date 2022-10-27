@@ -4,10 +4,11 @@
 #include<algorithm>
 #include<unordered_set>
 #include<vector>
+#include<cmath>
 #include"Punto.h"
-#include"Entrada.h"
-#include"Entrada_Hoja.h"
-#include"Entrada_Interna.h"
+#include"Entrada/Entrada.h"
+#include"Entrada/Entrada_Hoja.h"
+#include"Entrada/Entrada_Interna.h"
 #include"Nodo.h"
 #include"Interfaz.h"
 
