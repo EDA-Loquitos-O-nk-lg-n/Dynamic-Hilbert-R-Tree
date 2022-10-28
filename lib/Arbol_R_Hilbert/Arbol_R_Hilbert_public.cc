@@ -106,10 +106,10 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     ajustar_arbol(S);
 
     // I4
-    if(*S.begin() == raiz && S.size() > 1){
+    if(*next(S.begin(), S.size() - 1) == raiz && S.size() > 1){
         raiz = new Nodo{false, nullptr};
-        raiz->entradas.push_back(new Entrada_Interna{*S.begin()});
-        raiz->entradas.push_back(new Entrada_Interna{*next(S.begin())});
+        raiz->entradas.push_back(new Entrada_Interna{*next(S.begin(), S.size() - 1)});
+        raiz->entradas.push_back(new Entrada_Interna{*next(S.begin(), S.size() - 2)});
     }
 
 }
