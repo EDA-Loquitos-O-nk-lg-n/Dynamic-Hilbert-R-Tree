@@ -22,18 +22,17 @@ Arbol_R_Hilbert::Distante::Distante(Entrada* E, Punto P, Nodo *N): entrada(E), n
         }
     }
     else{
-        Entrada_Hoja* EH = dynamic_cast<Entrada_Hoja*>(E);
-        if(EH->objeto.size() == 1){
-            distancia = sqrt(pow(P.x-EH->objeto[0].x,2)+pow(P.y-EH->objeto[0].y,2));
+        if(E->objeto.size() == 1){
+            distancia = sqrt(pow(P.x-E->objeto[0].x,2)+pow(P.y-E->objeto[0].y,2));
         }
         else{
             double pm_x=0, pm_y=0;
-            for(auto p: EH->objeto){
+            for(auto p: E->objeto){
                 pm_x+=p.x;
                 pm_y+=p.y;
             }
-            pm_x/=EH->objeto.size();
-            pm_y/=EH->objeto.size();
+            pm_x/=E->objeto.size();
+            pm_y/=E->objeto.size();
             distancia = sqrt(pow(P.x-pm_x,2)+pow(P.y-pm_y,2));
         }
     }
@@ -78,7 +77,7 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     Nodo* partido = nullptr;
 
     // I1
-    Entrada_Hoja* r = new Entrada_Hoja{R};
+    Entrada* r = new Entrada{R};
     Nodo* L = escoger_hoja(r, r->indice);
 
     // I2
@@ -94,7 +93,7 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     unordered_set<Nodo*> S;
     if(L != raiz){
         for(Entrada* entrada : L->padre->entradas){
-            S.insert(dynamic_cast<Entrada_Interna*>(entrada)->hijo);
+            S.insert(entrada->hijo);
         }
     }
     else{
@@ -108,8 +107,8 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     // I4
     if(*next(S.begin(), S.size() - 1) == raiz && S.size() > 1){
         raiz = new Nodo{false, nullptr};
-        raiz->entradas.push_back(new Entrada_Interna{*next(S.begin(), S.size() - 1)});
-        raiz->entradas.push_back(new Entrada_Interna{*next(S.begin(), S.size() - 2)});
+        raiz->entradas.push_back(new Entrada{*next(S.begin(), S.size() - 1)});
+        raiz->entradas.push_back(new Entrada{*next(S.begin(), S.size() - 2)});
     }
 
 }

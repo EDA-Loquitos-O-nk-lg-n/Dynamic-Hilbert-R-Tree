@@ -6,9 +6,7 @@
 #include<vector>
 #include<cmath>
 #include"Punto.h"
-#include"Entrada/Entrada.h"
-#include"Entrada/Entrada_Hoja.h"
-#include"Entrada/Entrada_Interna.h"
+#include"Entrada.h"
 #include"Nodo.h"
 #include"Interfaz.h"
 
@@ -31,7 +29,7 @@ public:
     };
     vector<Distante> buscar(Punto R, int k);
 protected:
-    Nodo* escoger_hoja(Entrada_Hoja* R, int h);
+    Nodo* escoger_hoja(Entrada* R, int h);
     Nodo* manejar_desborde(Nodo* N, Entrada* r);
     void ajustar_arbol(unordered_set<Nodo*> &S);
 private:

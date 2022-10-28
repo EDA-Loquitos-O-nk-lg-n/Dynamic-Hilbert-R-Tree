@@ -167,7 +167,7 @@ void Interfaz::buscar_k_coordenadas(sf::Event& event){
         vector<Arbol_R_Hilbert::Distante> k_vecinos = arbol_r->buscar({coordenada.first, coordenada.second}, k);
         for(auto i: k_vecinos){
             double pm_x=0, pm_y=0;
-            Entrada_Hoja* iEH = dynamic_cast<Entrada_Hoja*>(i.entrada);
+            Entrada* iEH = i.entrada;
             for(auto p: iEH->objeto){
                 pm_x+=p.x;
                 pm_y+=p.y;
@@ -220,7 +220,7 @@ void Interfaz::imprimir_arbol_r(){
 void Interfaz::imprimir_arbol_r_recursivo(Nodo* nodo, int &espacio, int color){
     if(nodo->hoja){
         for(auto i: nodo->entradas){
-            Entrada_Hoja* eh = dynamic_cast<Entrada_Hoja*>(i);
+            Entrada* eh = i;
             if(eh->objeto.size() == 1){
                 sf::CircleShape coordenada;
                 coordenada.setRadius(4);
@@ -276,7 +276,7 @@ void Interfaz::imprimir_arbol_r_recursivo(Nodo* nodo, int &espacio, int color){
             rectangulo.setFillColor(sf::Color::Transparent);
 
             window.draw(rectangulo);
-            imprimir_arbol_r_recursivo(dynamic_cast<Entrada_Interna*>(i)->hijo, espacio, color+30);
+            imprimir_arbol_r_recursivo(i->hijo, espacio, color+30);
         }
     }
 }

@@ -2,7 +2,7 @@
 #define NODO_H
 
 #include<vector>
-#include"Entrada/Entrada.h"
+#include"Entrada.h"
 
 using namespace std;
 

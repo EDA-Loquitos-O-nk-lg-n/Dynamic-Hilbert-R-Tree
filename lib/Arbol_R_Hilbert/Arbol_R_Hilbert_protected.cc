@@ -1,6 +1,6 @@
 #include "../../include/Arbol_R_Hilbert.h"
 
-Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada_Hoja *R, int h) {
+Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada *R, int h) {
     // C1
     Nodo* N{raiz};
 
@@ -8,10 +8,10 @@ Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada_Hoja *R, int h) {
     while(!N->hoja){
         // C3
         int indice_mayor{};
-        Entrada_Interna* E{dynamic_cast<Entrada_Interna*>(raiz->entradas[indice_mayor])};
+        Entrada* E{raiz->entradas[indice_mayor]};
         while(indice_mayor < raiz->entradas.size()-1 && E->indice <= h){
             indice_mayor++;
-            E = dynamic_cast<Entrada_Interna*>(raiz->entradas[indice_mayor]);
+            E = raiz->entradas[indice_mayor];
         }
         // C4
         N = E->hijo;
@@ -30,10 +30,9 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     vector<Entrada*> epsilon;
     if(N!=raiz){
         for(Entrada* e: N->padre->entradas){
-            Entrada_Interna* eh = dynamic_cast<Entrada_Interna*>(e);
-            nodos.push_back(eh->hijo);
-            epsilon.insert(epsilon.end(), eh->hijo->entradas.begin(), eh->hijo->entradas.end());
-            if(eh->hijo->entradas.size() == M)
+            nodos.push_back(e->hijo);
+            epsilon.insert(epsilon.end(), e->hijo->entradas.begin(), e->hijo->entradas.end());
+            if(e->hijo->entradas.size() == M)
                 nodos_llenos++;
         }
     }
@@ -95,7 +94,7 @@ void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
         // A2
         if(N_p->entradas.size() < S.size()){
             Nodo* NN = *S.begin();
-            Entrada_Interna* E_NN = new Entrada_Interna{NN};
+            Entrada* E_NN = new Entrada{NN};
             if(N_p->entradas.size() < M){
                 N_p->entradas.insert(lower_bound(N_p->entradas.begin(), N_p->entradas.end(), E_NN, comparar_entrada), E_NN);
                 E_NN->hijo->padre = N_p;
@@ -114,9 +113,8 @@ void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
         if(*next(S.begin(), S.size() - 1) != raiz){
             for(Nodo* p: P){
                 for(Entrada* pe: p->padre->entradas){
-                    Entrada_Interna* pei = dynamic_cast<Entrada_Interna*>(pe);
-                    if(pei->hijo == p){
-                        pei->actualizar_valores();
+                    if(pe->hijo == p){
+                        pe->actualizar_valores();
                         break;
                     }
                 }
