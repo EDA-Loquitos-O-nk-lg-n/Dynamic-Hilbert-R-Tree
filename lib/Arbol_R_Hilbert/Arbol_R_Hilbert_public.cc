@@ -77,13 +77,19 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     Nodo* partido = nullptr;
 
     // I1
+    // Creamos una entrada utilizando el objeto R ingresado
     Entrada* r = new Entrada{R};
     Nodo* L = escoger_hoja(r, r->indice);
 
     // I2
+    // Si el nodo no esta lleno
     if(L->entradas.size() < M){
+        // Insertar el nuevo objeto en orden de acuerdo al indice Hilbert
         L->entradas.insert(lower_bound(L->entradas.begin(),L->entradas.end(),r,comparar_entrada), r);
+        // Asignar el puntero contenedor al nodo en el que se insertó la entrada
+        r->contenedor = L;
     }
+    // Si está lleno
     else{
         partido = manejar_desborde(L, r);
     }
