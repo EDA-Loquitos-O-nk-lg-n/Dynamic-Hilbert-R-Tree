@@ -13,8 +13,6 @@ struct Entrada{
     Entrada();
     Intervalo intervalos[2];
     int indice; // maximo valor hilbert
-
-    Nodo* contenedor; // Nodo que contiene la entrada actual
     
     // Entrada nodo interno
     Entrada(Nodo* H);

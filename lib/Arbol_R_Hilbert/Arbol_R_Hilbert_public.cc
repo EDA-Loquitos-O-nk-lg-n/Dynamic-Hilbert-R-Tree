@@ -86,8 +86,6 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     if(L->entradas.size() < M){
         // Insertar el nuevo objeto en orden de acuerdo al indice Hilbert
         L->entradas.insert(lower_bound(L->entradas.begin(),L->entradas.end(),r,comparar_entrada), r);
-        // Asignar el puntero contenedor al nodo en el que se insertó la entrada
-        r->contenedor = L;
     }
     // Si está lleno
     else{
@@ -111,13 +109,15 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     if(partido != nullptr)
         S.insert(partido);
 
-    ajustar_arbol(S);
+    bool raiz_partida = ajustar_arbol(S);
 
     // I4
-    if(*next(S.begin(), S.size() - 1) == raiz && S.size() > 1){
+    if(raiz_partida){
         raiz = new Nodo{false, nullptr};
         raiz->entradas.push_back(new Entrada{*next(S.begin(), S.size() - 1)});
+        raiz->entradas[0]->hijo->padre = raiz;
         raiz->entradas.push_back(new Entrada{*next(S.begin(), S.size() - 2)});
+        raiz->entradas[1]->hijo->padre = raiz;
     }
 
 }

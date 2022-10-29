@@ -8,10 +8,10 @@ Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada *R, int h) {
     while(!N->hoja){
         // C3
         int indice_mayor{};
-        Entrada* E{raiz->entradas[indice_mayor]};
-        while(indice_mayor < raiz->entradas.size()-1 && E->indice <= h){
+        const Entrada* E{N->entradas[indice_mayor]};
+        while(indice_mayor < N->entradas.size()-1 && E->indice <= h){
             indice_mayor++;
-            E = raiz->entradas[indice_mayor];
+            E = N->entradas[indice_mayor];
         }
         // C4
         N = E->hijo;
@@ -27,8 +27,11 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     int cantidad_nodos = (N==raiz?1:N->padre->entradas.size());
     // Contador de nodos llenos
     int nodos_llenos = 0;
+    // Cantidad de entradas que se distribuiran a cada nodo
+    int cantidad_entradas;
     // Nodos vecinoso
     vector<Nodo*> nodos;
+    vector<Entrada*>::iterator it_begin, it_end;
 
     // H1
     // Contenedor que almacena todas las entradas de los vecinos al nivel del nodo N
@@ -42,7 +45,7 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
             // Insertamos las entradas de un nodo al contenedor epsilon 
             epsilon.insert(epsilon.end(), e->hijo->entradas.begin(), e->hijo->entradas.end());
             // Si el nodo iterado está lleno, aumentos el contador de llenos
-            if(e->hijo->entradas.size() == M)
+            if(e->hijo->entradas.size() >= M)
                 nodos_llenos++;
         }
     }
@@ -62,99 +65,68 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     epsilon.insert(lower_bound(epsilon.begin(),epsilon.end(),r,comparar_entrada), r);
 
     // H3
-    // Si existen nodos que no están llenos
-    if(nodos_llenos < cantidad_nodos){
-        // Calcular cuantas entradas tendrá cada nodo
-        int cantidad_entradas = epsilon.size() / cantidad_nodos;
-        vector<Entrada*>::iterator it_begin, it_end;
-        // Agregar la cantidad de entradas a los vecinos, en orden
-        for(int i = 0; i<nodos.size()-1; i++){
-            // Limpiar entradas del nodo i
-            nodos[i]->entradas.clear();
-            it_begin = next(epsilon.begin(), i*cantidad_entradas);
-            it_end = next(epsilon.begin(), (i+1)*cantidad_entradas);
-            while (it_begin != it_end)
-            {
-                // Actualizar el puntero contenedor al nodo al que iróan
-                (*it_begin)->contenedor = nodos[i];
-                // Insertar la entrada al nodo i
-                nodos[i]->entradas.push_back(*it_begin);
-                // Siguiente entrada
-                it_begin++;
-            }
-        }
-
-        // Asignar las entradas que sobran al último nodo
-        it_begin = next(epsilon.begin(),(nodos.size()-1)*cantidad_entradas);
-        it_end = epsilon.end();
-        nodos[nodos.size()-1]->entradas.clear();
-        while (it_begin != it_end)
-        {
-            // Actualizar el puntero contenedor al nodo al que iróan
-            (*it_begin)->contenedor = nodos[nodos.size()-1];
-            // Insertar la entrada al nodo i
-            nodos[nodos.size()-1]->entradas.push_back(*it_begin);
-            // Siguiente entrada
-            it_begin++;
-        }
-
-    }
-
+    // Si existen nodos que no están llenos, no hacer nuevas modificaciones
+    
     // H4
     // Si todos los nodos están llenos
-    else{
+    if(nodos_llenos >= cantidad_nodos){
         // Creamos un nodo con la condicional de si es nodo interno u hoja
         NN = new Nodo{N->hoja};
         // Agregamos NN al contenedor de nodos
         nodos.push_back(NN);
         // Incrementamos la cantidad de nodos
         cantidad_nodos++;
-        // Calculamos cuantas entradas le toca a cada nodo
-        int cantidad_entradas = epsilon.size() / cantidad_nodos;
-        vector<Entrada*>::iterator it_begin, it_end;
+    }
 
-        // Agregar la cantidad de entradas a los vecinos, en orden
-        for(int i = 0; i<nodos.size()-1; i++){
-            // Limpiar entradas del nodo i
-            nodos[i]->entradas.clear();
-            it_begin = next(epsilon.begin(), i*cantidad_entradas);
-            it_end = next(epsilon.begin(), (i+1)*cantidad_entradas);
-            while (it_begin != it_end)
-            {
-                // Actualizar el puntero contenedor al nodo al que iróan
-                (*it_begin)->contenedor = nodos[i];
-                // Insertar la entrada al nodo i
-                nodos[i]->entradas.push_back(*it_begin);
-                // Siguiente entrada
-                it_begin++;
-            }
-        }
-
-        // Asignar las entradas que sobran al último nodo
-        it_begin = next(epsilon.begin(),(nodos.size()-1)*cantidad_entradas);
-        it_end = epsilon.end();
-        nodos[nodos.size()-1]->entradas.clear();
+    // Distribuir entre todos los nodos
+    // Calcular cuantas entradas tendrá cada nodo
+    cantidad_entradas = epsilon.size() / cantidad_nodos;
+    // Agregar la cantidad de entradas a los vecinos, en orden
+    for(int i = 0; i<nodos.size()-1; i++){
+        // Limpiar entradas del nodo i
+        nodos[i]->entradas.clear();
+        it_begin = next(epsilon.begin(), i*cantidad_entradas);
+        it_end = next(epsilon.begin(), (i+1)*cantidad_entradas);
         while (it_begin != it_end)
         {
-            // Actualizar el puntero contenedor al nodo al que iróan
-            (*it_begin)->contenedor = nodos[nodos.size()-1];
+            // reasignar padre
+            if((*it_begin)->hijo != nullptr){
+                (*it_begin)->hijo->padre = nodos[i];
+            }
             // Insertar la entrada al nodo i
-            nodos[nodos.size()-1]->entradas.push_back(*it_begin);
+            nodos[i]->entradas.push_back(*it_begin);
             // Siguiente entrada
             it_begin++;
         }
+    }
+    // Asignar las entradas que sobran al último nodo
+    it_begin = next(epsilon.begin(),(nodos.size()-1)*cantidad_entradas);
+    it_end = epsilon.end();
+    // Limpiar entradas del ultimo nodo
+    nodos[nodos.size()-1]->entradas.clear();
+    while (it_begin != it_end)
+    {
+        // reasignar padre
+        if((*it_begin)->hijo != nullptr){
+            (*it_begin)->hijo->padre = nodos[nodos.size()-1];
+        }
+        // Insertar la entrada al nodo i
+        nodos[nodos.size()-1]->entradas.push_back(*it_begin);
+        // Siguiente entrada
+        it_begin++;
     }
     
     return NN;
 }
 
-void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
+bool Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
     // Puntero a posible nuevo padre 
     Nodo* PP;
+    bool no_nivel_raiz = *next(S.begin(), S.size() - 1) != raiz;
 
     // A1
     // Mientras los nodos no estén en el nivel de la raizs
-    while(*next(S.begin(), S.size() - 1) != raiz){
+    while(no_nivel_raiz){
         // Definir como nulo
         PP = nullptr;
         // Nodo padre de N y vecinos
@@ -169,10 +141,10 @@ void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
             Entrada* E_NN = new Entrada{NN};
             // Si el padre no está lleno
             if(N_p->entradas.size() < M){
-                // Insertar la entrada de acuerdo al indice Hilbert
-                N_p->entradas.insert(lower_bound(N_p->entradas.begin(), N_p->entradas.end(), E_NN, comparar_entrada), E_NN);
                 // Cambiamos el padre del nodo NN como N_p
                 E_NN->hijo->padre = N_p;
+                // Insertar la entrada de acuerdo al indice Hilbert
+                N_p->entradas.insert(lower_bound(N_p->entradas.begin(), N_p->entradas.end(), E_NN, comparar_entrada), E_NN);
             }
             // Si el padre está lleno
             else{
@@ -183,23 +155,34 @@ void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
         // A3
         unordered_set<Nodo*> P;
         
-        for(Nodo* n: S)
+        for(Nodo* n: S){
+            if(n->padre == raiz)
+                no_nivel_raiz = false;
             P.insert(n->padre);
+        }
 
+        // if(*next(P.begin(), P.size() - 1) != raiz){
         if(*next(S.begin(), S.size() - 1) != raiz){
             for(Nodo* p: P){
-                for(Entrada* pe: p->padre->entradas){
-                    if(pe->hijo == p){
+                // if(p->padre == nullptr)
+                //     continue;
+                // for(Entrada* pe: p->padre->entradas){
+                for(Entrada* pe: p->entradas){
+                    // if(pe->hijo == p){
                         pe->actualizar_valores();
-                        break;
-                    }
+                        // break;
+                    // }
                 }
             }
         }
         
         // A4
-        if(PP != nullptr)
+        if(PP != nullptr){
+            no_nivel_raiz = (PP==raiz?false:no_nivel_raiz);
             P.insert(PP);
+        }
         S = P;
     }
+
+    return S.size() > 1;
 }

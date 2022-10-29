@@ -6,6 +6,8 @@
 
 using namespace std;
 
+struct Entrada;
+
 struct Nodo{
     bool hoja;
     Nodo* padre;
