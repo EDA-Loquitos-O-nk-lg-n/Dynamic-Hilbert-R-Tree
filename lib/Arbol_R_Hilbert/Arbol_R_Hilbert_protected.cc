@@ -149,10 +149,13 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
 }
 
 void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
+    // Puntero a posible nuevo padre 
     Nodo* PP;
 
     // A1
+    // Mientras los nodos no estén en el nivel de la raizs
     while(*next(S.begin(), S.size() - 1) != raiz){
+        // Definir como nulo
         PP = nullptr;
         Nodo* N_p = (*next(S.begin(), S.size() - 1))->padre;
 

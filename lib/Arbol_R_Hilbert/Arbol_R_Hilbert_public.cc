@@ -98,13 +98,16 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     // I3
     unordered_set<Nodo*> S;
     if(L != raiz){
+        // Agregar L y sus vecinos
         for(Entrada* entrada : L->padre->entradas){
             S.insert(entrada->hijo);
         }
     }
     else{
+        // Agregar solo L
         S.insert(L);
     }
+    // Agregar nueva hoja en caso sea hoja
     if(partido != nullptr)
         S.insert(partido);
 
