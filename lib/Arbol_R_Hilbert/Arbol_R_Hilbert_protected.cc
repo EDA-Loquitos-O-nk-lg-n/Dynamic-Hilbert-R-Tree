@@ -157,16 +157,24 @@ void Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
     while(*next(S.begin(), S.size() - 1) != raiz){
         // Definir como nulo
         PP = nullptr;
+        // Nodo padre de N y vecinos
         Nodo* N_p = (*next(S.begin(), S.size() - 1))->padre;
 
         // A2
+        // Si el nodo N fue partido, habrán más nodos en S que entradas en el padre N_p
         if(N_p->entradas.size() < S.size()){
+            // NN es el nuevo nodo partido, unordered_set::insert manda los nuevos elementos al comienzo
             Nodo* NN = *S.begin();
+            // Volvemos NN como una entrada
             Entrada* E_NN = new Entrada{NN};
+            // Si el padre no está lleno
             if(N_p->entradas.size() < M){
+                // Insertar la entrada de acuerdo al indice Hilbert
                 N_p->entradas.insert(lower_bound(N_p->entradas.begin(), N_p->entradas.end(), E_NN, comparar_entrada), E_NN);
+                // Cambiamos el padre del nodo NN como N_p
                 E_NN->hijo->padre = N_p;
             }
+            // Si el padre está lleno
             else{
                 PP = manejar_desborde(N_p, E_NN);
             }

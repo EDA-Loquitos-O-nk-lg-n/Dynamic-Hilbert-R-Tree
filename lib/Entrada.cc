@@ -8,7 +8,7 @@ Entrada::Entrada(Nodo* H): hijo(H){
 }
 
 Entrada::Entrada(const vector<Punto> &R)
-: objeto(R){
+: objeto(R), hijo(nullptr){
     indice = Funciones_Hilbert::xy2d(N, R[0].x, R[0].y);
     intervalos[0] = {numeric_limits<int>::max(), numeric_limits<int>::min()};
     intervalos[1] = {numeric_limits<int>::max(), numeric_limits<int>::min()};
