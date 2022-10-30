@@ -97,8 +97,12 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     if(L == raiz)
         S.push_back(L);
     else
-        for(Entrada* e: L->padre->entradas)
+        for(Entrada* e: L->padre->entradas){ // Ver si reorganizamos por entrada interna
+            if(e->hijo == L){
+                e->actualizar_valores();
+            }
             S.push_back(e->hijo);
+        }
     // Agregar nueva hoja en caso sea hoja
     if(NL != nullptr){
         S.push_front(NL);
@@ -115,4 +119,20 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
         raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC2 ,comparar_entrada), RC2);
     }
 
+    imprimir_nodo_indice_h(raiz);
+    cout<<endl;
+
+}
+void Arbol_R_Hilbert::imprimir_nodo_indice_h(Nodo* n){
+    if(n->hoja){
+        for(Entrada* e: n->entradas){
+            cout<<e->indice<<' ';
+        }
+        cout<<'/'<<' ';
+    }
+    else{
+        for(Entrada* e: n->entradas){
+            imprimir_nodo_indice_h(e->hijo);
+        }
+    }
 }

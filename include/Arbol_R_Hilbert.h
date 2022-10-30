@@ -29,6 +29,7 @@ public:
         Nodo* nodo;
     };
     vector<Distante> buscar(Punto R, int k);
+    void imprimir_nodo_indice_h(Nodo* n);
 protected:
     Nodo* escoger_hoja(Entrada* R, int h);
     Nodo* manejar_desborde(Nodo* N, Entrada* r);
