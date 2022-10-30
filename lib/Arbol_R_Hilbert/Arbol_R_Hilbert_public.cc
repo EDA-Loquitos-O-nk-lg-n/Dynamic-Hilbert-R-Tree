@@ -74,7 +74,7 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
 }
 
 void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
-    Nodo* partido = nullptr;
+    Nodo* NL = nullptr;
 
     // I1
     // Creamos una entrada utilizando el objeto R ingresado
@@ -89,42 +89,32 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     }
     // Si está lleno
     else{
-        partido = manejar_desborde(L, r);
+        NL = manejar_desborde(L, r);
     }
 
     
     // I3
-    unordered_set<Nodo*> S_uset;
-    int S_uset_capacidad = S_uset.size();
     deque<Nodo*> S;
-    if(L != raiz){
-        // Agregar L y sus vecinos
-        for(Entrada* entrada : L->padre->entradas){
-            S_uset.insert(entrada->hijo);
-            if(S_uset_capacidad < S_uset.size()){
-                S.push_front(entrada->hijo);
-                S_uset_capacidad++;
-            }
-        }
-    }
-    else{
-        // Agregar solo L
-        S.push_front(L);
-    }
+    if(L == raiz)
+        S.push_back(L);
+    else
+        for(Entrada* e: L->padre->entradas)
+            S.push_back(e->hijo);
     // Agregar nueva hoja en caso sea hoja
-    if(partido != nullptr){
-        S.push_front(partido);
+    if(NL != nullptr){
+        S.push_front(NL);
     }
 
-    bool raiz_partida = ajustar_arbol(S);
+    bool RS = ajustar_arbol(S, L, NL);
 
-    // I4
-    if(raiz_partida){
+    // I4 
+    if(RS){
         raiz = new Nodo{false, nullptr};
-        raiz->entradas.push_back(new Entrada{S[1]});
-        raiz->entradas[0]->hijo->padre = raiz;
-        raiz->entradas.push_back(new Entrada{S[0]});
-        raiz->entradas[1]->hijo->padre = raiz;
+        S[0]->padre = raiz;
+        S[1]->padre = raiz;
+        Entrada *RC1 = new Entrada{S[0]}, *RC2 = new Entrada{S[1]};
+        raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC1 ,comparar_entrada), RC1);
+        raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC2 ,comparar_entrada), RC2);
     }
 
 }

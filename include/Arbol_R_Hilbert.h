@@ -32,7 +32,7 @@ public:
 protected:
     Nodo* escoger_hoja(Entrada* R, int h);
     Nodo* manejar_desborde(Nodo* N, Entrada* r);
-    bool ajustar_arbol(deque<Nodo*> &S);
+    bool ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN);
 private:
     static bool comparar_entrada(Entrada* a, Entrada *b);
     Nodo* raiz;

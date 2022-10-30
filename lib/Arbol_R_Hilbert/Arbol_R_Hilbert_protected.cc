@@ -90,9 +90,8 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
         while (it_begin != it_end)
         {
             // reasignar padre
-            if((*it_begin)->hijo != nullptr){
+            if((*it_begin)->hijo != nullptr)
                 (*it_begin)->hijo->padre = nodos[i];
-            }
             // Insertar la entrada al nodo i
             nodos[i]->entradas.push_back(*it_begin);
             // Siguiente entrada
@@ -107,9 +106,8 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     while (it_begin != it_end)
     {
         // reasignar padre
-        if((*it_begin)->hijo != nullptr){
+        if((*it_begin)->hijo != nullptr)
             (*it_begin)->hijo->padre = nodos[nodos.size()-1];
-        }
         // Insertar la entrada al nodo i
         nodos[nodos.size()-1]->entradas.push_back(*it_begin);
         // Siguiente entrada
@@ -119,10 +117,11 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     return NN;
 }
 
-bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo *> &S) {
+bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
     // Puntero a posible nuevo padre 
-    Nodo* PP;
-    bool no_nivel_raiz = S.back() != raiz;
+    Nodo* PP{nullptr};
+    // Booleano que determina que no se ha llegado al nivel de la raiz
+    bool no_nivel_raiz {N != raiz};
 
     // A1
     // Mientras los nodos no estén en el nivel de la raizs
@@ -130,13 +129,10 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo *> &S) {
         // Definir como nulo
         PP = nullptr;
         // Nodo padre de N y vecinos
-        Nodo* N_p = (*next(S.begin(), S.size() - 1))->padre;
+        Nodo* N_p = N->padre;
 
         // A2
-        // Si el nodo N fue partido, habrán más nodos en S que entradas en el padre N_p
-        if(N_p->entradas.size() < S.size()){
-            // NN es el nuevo nodo partido, unordered_set::insert manda los nuevos elementos al comienzo
-            Nodo* NN = S.front();
+        if( NN != nullptr ){
             // Volvemos NN como una entrada
             Entrada* E_NN = new Entrada{NN};
             // Si el padre no está lleno
@@ -147,46 +143,24 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo *> &S) {
                 N_p->entradas.insert(lower_bound(N_p->entradas.begin(), N_p->entradas.end(), E_NN, comparar_entrada), E_NN);
             }
             // Si el padre está lleno
-            else{
+            else
                 PP = manejar_desborde(N_p, E_NN);
-            }
         }
 
         // A3
-        unordered_set<Nodo*> P_uset;
         deque<Nodo*> P;
-        int P_uset_capacidad = P_uset.size();
-        
-        for(Nodo* n: S){
-            if(n->padre == raiz)
-                no_nivel_raiz = false;
-            P_uset.insert(n->padre);
-            if(P_uset_capacidad < P_uset.size()){
-                P.push_front(n->padre);
-                P_uset_capacidad++;
-            }
-        }
-
-        // if(*next(P.begin(), P.size() - 1) != raiz){
-        if(S.back() != raiz){
-            for(Nodo* p: P){
-                // if(p->padre == nullptr)
-                //     continue;
-                // for(Entrada* pe: p->padre->entradas){
-                for(Entrada* pe: p->entradas){
-                    // if(pe->hijo == p){
-                        pe->actualizar_valores();
-                        // break;
-                    // }
-                }
-            }
+        P.push_front(N_p);
+        if(PP != nullptr)
+            P.push_front(PP);
+        for(Nodo* p: P){
+            no_nivel_raiz = no_nivel_raiz && p != raiz;
+            for(Entrada* e: p->entradas)
+                e->actualizar_valores();
         }
         
         // A4
-        if(PP != nullptr){
-            no_nivel_raiz = (PP==raiz?false:no_nivel_raiz);
-            P.push_front(PP);
-        }
+        N = N_p;
+        NN = PP;
         S = P;
     }
 
