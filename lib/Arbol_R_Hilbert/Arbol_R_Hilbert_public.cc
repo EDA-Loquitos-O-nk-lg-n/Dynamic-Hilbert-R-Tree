@@ -94,29 +94,36 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
 
     
     // I3
-    unordered_set<Nodo*> S;
+    unordered_set<Nodo*> S_uset;
+    int S_uset_capacidad = S_uset.size();
+    deque<Nodo*> S;
     if(L != raiz){
         // Agregar L y sus vecinos
         for(Entrada* entrada : L->padre->entradas){
-            S.insert(entrada->hijo);
+            S_uset.insert(entrada->hijo);
+            if(S_uset_capacidad < S_uset.size()){
+                S.push_front(entrada->hijo);
+                S_uset_capacidad++;
+            }
         }
     }
     else{
         // Agregar solo L
-        S.insert(L);
+        S.push_front(L);
     }
     // Agregar nueva hoja en caso sea hoja
-    if(partido != nullptr)
-        S.insert(partido);
+    if(partido != nullptr){
+        S.push_front(partido);
+    }
 
     bool raiz_partida = ajustar_arbol(S);
 
     // I4
     if(raiz_partida){
         raiz = new Nodo{false, nullptr};
-        raiz->entradas.push_back(new Entrada{*next(S.begin(), S.size() - 1)});
+        raiz->entradas.push_back(new Entrada{S[1]});
         raiz->entradas[0]->hijo->padre = raiz;
-        raiz->entradas.push_back(new Entrada{*next(S.begin(), S.size() - 2)});
+        raiz->entradas.push_back(new Entrada{S[0]});
         raiz->entradas[1]->hijo->padre = raiz;
     }
 

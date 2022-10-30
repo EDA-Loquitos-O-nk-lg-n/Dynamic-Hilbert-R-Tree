@@ -4,6 +4,7 @@
 #include<algorithm>
 #include<unordered_set>
 #include<vector>
+#include<deque>
 #include<cmath>
 #include"Punto.h"
 #include"Entrada.h"
@@ -31,7 +32,7 @@ public:
 protected:
     Nodo* escoger_hoja(Entrada* R, int h);
     Nodo* manejar_desborde(Nodo* N, Entrada* r);
-    bool ajustar_arbol(unordered_set<Nodo*> &S);
+    bool ajustar_arbol(deque<Nodo*> &S);
 private:
     static bool comparar_entrada(Entrada* a, Entrada *b);
     Nodo* raiz;

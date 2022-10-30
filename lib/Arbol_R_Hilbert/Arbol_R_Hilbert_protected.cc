@@ -119,10 +119,10 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     return NN;
 }
 
-bool Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
+bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo *> &S) {
     // Puntero a posible nuevo padre 
     Nodo* PP;
-    bool no_nivel_raiz = *next(S.begin(), S.size() - 1) != raiz;
+    bool no_nivel_raiz = S.back() != raiz;
 
     // A1
     // Mientras los nodos no estén en el nivel de la raizs
@@ -136,7 +136,7 @@ bool Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
         // Si el nodo N fue partido, habrán más nodos en S que entradas en el padre N_p
         if(N_p->entradas.size() < S.size()){
             // NN es el nuevo nodo partido, unordered_set::insert manda los nuevos elementos al comienzo
-            Nodo* NN = *S.begin();
+            Nodo* NN = S.front();
             // Volvemos NN como una entrada
             Entrada* E_NN = new Entrada{NN};
             // Si el padre no está lleno
@@ -153,16 +153,22 @@ bool Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
         }
 
         // A3
-        unordered_set<Nodo*> P;
+        unordered_set<Nodo*> P_uset;
+        deque<Nodo*> P;
+        int P_uset_capacidad = P_uset.size();
         
         for(Nodo* n: S){
             if(n->padre == raiz)
                 no_nivel_raiz = false;
-            P.insert(n->padre);
+            P_uset.insert(n->padre);
+            if(P_uset_capacidad < P_uset.size()){
+                P.push_front(n->padre);
+                P_uset_capacidad++;
+            }
         }
 
         // if(*next(P.begin(), P.size() - 1) != raiz){
-        if(*next(S.begin(), S.size() - 1) != raiz){
+        if(S.back() != raiz){
             for(Nodo* p: P){
                 // if(p->padre == nullptr)
                 //     continue;
@@ -179,7 +185,7 @@ bool Arbol_R_Hilbert::ajustar_arbol(unordered_set<Nodo *> &S) {
         // A4
         if(PP != nullptr){
             no_nivel_raiz = (PP==raiz?false:no_nivel_raiz);
-            P.insert(PP);
+            P.push_front(PP);
         }
         S = P;
     }
