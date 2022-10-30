@@ -91,7 +91,6 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     else{
         NL = manejar_desborde(L, r);
     }
-
     
     // I3
     deque<Nodo*> S;
@@ -104,7 +103,6 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     if(NL != nullptr){
         S.push_front(NL);
     }
-
     bool RS = ajustar_arbol(S, L, NL);
 
     // I4 

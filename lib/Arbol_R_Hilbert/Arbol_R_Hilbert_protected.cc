@@ -29,6 +29,8 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     int nodos_llenos = 0;
     // Cantidad de entradas que se distribuiran a cada nodo
     int cantidad_entradas;
+    // Entradas sobrantes a repartir
+    int residuo_entradas;
     // Nodos vecinoso
     vector<Nodo*> nodos;
     vector<Entrada*>::iterator it_begin, it_end;
@@ -81,12 +83,16 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
     // Distribuir entre todos los nodos
     // Calcular cuantas entradas tendrá cada nodo
     cantidad_entradas = epsilon.size() / cantidad_nodos;
-    // Agregar la cantidad de entradas a los vecinos, en orden
-    for(int i = 0; i<nodos.size()-1; i++){
-        // Limpiar entradas del nodo i
+    residuo_entradas = epsilon.size() % cantidad_nodos;
+    // Inicio del iterator inicial para el primer nodo
+    it_begin = epsilon.begin();
+    // Iterar por todos los nodos
+    for(int i = 0; i<nodos.size(); i++){
+        // Iterador final
+        it_end = next(it_begin, cantidad_entradas + (residuo_entradas-- > 0));
+        // Remover todas las entradas del nodo i
         nodos[i]->entradas.clear();
-        it_begin = next(epsilon.begin(), i*cantidad_entradas);
-        it_end = next(epsilon.begin(), (i+1)*cantidad_entradas);
+        // Procesar cada entrada del intervalo hasta llegar al interador final
         while (it_begin != it_end)
         {
             // reasignar padre
@@ -97,21 +103,6 @@ Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
             // Siguiente entrada
             it_begin++;
         }
-    }
-    // Asignar las entradas que sobran al último nodo
-    it_begin = next(epsilon.begin(),(nodos.size()-1)*cantidad_entradas);
-    it_end = epsilon.end();
-    // Limpiar entradas del ultimo nodo
-    nodos[nodos.size()-1]->entradas.clear();
-    while (it_begin != it_end)
-    {
-        // reasignar padre
-        if((*it_begin)->hijo != nullptr)
-            (*it_begin)->hijo->padre = nodos[nodos.size()-1];
-        // Insertar la entrada al nodo i
-        nodos[nodos.size()-1]->entradas.push_back(*it_begin);
-        // Siguiente entrada
-        it_begin++;
     }
     
     return NN;
