@@ -37,7 +37,8 @@ protected:
     friend bool operator<=(const Distante &pd1, const Distante &pd2);
     friend bool operator>=(const Distante &pd1, const Distante &pd2);
     Nodo* escoger_hoja(Entrada* R, int h);
-    Nodo* manejar_desborde(Nodo* N, Entrada* r);
+    Nodo* manejar_desborde_exceso(Nodo* N, Entrada* r);
+    Nodo* manejar_desborde_defecto(Nodo* N, bool &combinado);
     bool ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN);
 private:
     static bool comparar_entrada(Entrada* a, Entrada *b);

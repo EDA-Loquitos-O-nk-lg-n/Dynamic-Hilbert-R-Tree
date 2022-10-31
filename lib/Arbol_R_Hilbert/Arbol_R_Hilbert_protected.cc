@@ -20,7 +20,59 @@ Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada *R, int h) {
     return N;
 }
 
-Nodo* Arbol_R_Hilbert::manejar_desborde(Nodo *N, Entrada *r) {
+Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
+    int cantidad_nodos = N->padre->entradas.size();
+    // int cantidad_nodos = (N==raiz?1:N->padre->entradas.size());
+    int nodos_defecto = 0;
+    int entradas_por_nodo;
+    int entradas_sobrantes;
+    vector<Nodo*> nodos;
+    vector<Entrada*>::iterator it_begin, it_end;
+
+    // Obtener todos las entradas de los nodos vecinos
+    vector<Entrada*> epsilon;
+    for(Entrada* e: N->padre->entradas){
+        nodos.push_back(e->hijo);
+        epsilon.insert(epsilon.end(), e->hijo->entradas.begin(), e->hijo->entradas.end());
+        // Contar cuantos nodos tendrían underflow
+        if(e->hijo->entradas.size() <= m)
+            nodos_defecto++;
+    }
+
+    // Si todos están en el limite inferior
+    if(nodos_defecto >= nodos.size()){
+        nodos.pop_back();
+        nodos.back()->padre->entradas.pop_back();
+        cantidad_nodos--;
+        combinado = cantidad_nodos < m;
+    }
+
+    // Distribucion de entradas a nodo y vecinos
+    entradas_por_nodo = epsilon.size() / cantidad_nodos;
+    entradas_sobrantes = epsilon.size() % cantidad_nodos;
+
+    it_begin = epsilon.begin();
+    // Distribucion
+    for (int i = 0; i < cantidad_nodos; i++){
+        it_end = next(it_begin, entradas_por_nodo + (entradas_sobrantes-- > 0));
+        nodos[i]->entradas.clear();
+        while (it_begin != it_end){
+            if((*it_begin)->hijo != nullptr)
+                (*it_begin)->hijo->padre = nodos[i];
+            nodos[i]->entradas.push_back(*it_begin);
+            it_begin++;
+        }
+    }
+
+    // Actualizar mbrs e indice-h de cada nodo
+    for(Entrada* ep: nodos.front()->padre->entradas){
+        ep->actualizar_valores();
+    }
+
+    return nodos.front()->padre;
+}
+
+Nodo* Arbol_R_Hilbert::manejar_desborde_exceso(Nodo *N, Entrada *r) {
     // Posible nodo creado apuntando a nulo
     Nodo* NN = nullptr;
     // Cantidad de nodos al nivel al nodo N (1 si es raiz)
@@ -135,7 +187,7 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
             }
             // Si el padre está lleno
             else
-                PP = manejar_desborde(N_p, E_NN);
+                PP = manejar_desborde_exceso(N_p, E_NN);
         }
 
         // A3
