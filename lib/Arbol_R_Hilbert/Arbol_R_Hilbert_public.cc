@@ -82,10 +82,44 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
     }
 
     // D3
-    if(L->entradas.size() < m){
-        
-    }
+    if(L->entradas.size() < m ){
+        while(L != raiz){
+            int cantidad_nodos = L->padre->entradas.size();
+            int nodos_vacios = 0;
+            int cantidad_entradas;
+            int residuo_entradas;
+            vector<Nodo*> nodos;
+            vector<Entrada*>::iterator it_begin, it_end;
 
+            vector<Entrada*> epsilon;
+            for(Entrada* e: L->padre->entradas){
+                nodos.push_back(e->hijo);
+                epsilon.insert(epsilon.end(), e->hijo->entradas.begin(), e->hijo->entradas.end());
+                if(e->hijo->entradas.size() <= m)
+                    nodos_vacios++;
+            }
+
+            if(nodos_vacios >= nodos.size()){
+                cantidad_nodos--;
+            }
+            cantidad_entradas = epsilon.size() / cantidad_nodos;
+            residuo_entradas = epsilon.size() % cantidad_nodos;
+
+            for (int i = 0; i < cantidad_nodos; i++)
+            {
+                it_end = next(it_begin, cantidad_entradas + (residuo_entradas-- > 0));
+                nodos[i]->entradas.clear();
+                while (it_begin != it_end)
+                {
+                    if((*it_begin)->hijo != nullptr)
+                        (*it_begin)->hijo->padre = nodos[i];
+                    nodos[i]->entradas.push_back(*it_begin);
+                    it_begin++;
+                }
+            }
+            
+        }
+    }
 
     // D4
 
