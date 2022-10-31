@@ -67,6 +67,9 @@ vector<Arbol_R_Hilbert::Distante> Arbol_R_Hilbert::buscar(Punto R, int k) {
 }
 
 void Arbol_R_Hilbert::eliminar(Punto R) {
+    if(raiz->entradas.size() == 0){
+        return;
+    }
     // D1
     Distante cerca = buscar(R, 1)[0];
     Entrada* E = cerca.entrada;
@@ -79,7 +82,7 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
 
     // D3
     bool defecto_superior = false;
-    if(L->entradas.size() < m){
+    if(L->entradas.size() < m && L->padre != nullptr){
         defecto_superior =  L->entradas.size() < m;
         L = manejar_desborde_defecto(L, defecto_superior);
     }
@@ -99,9 +102,10 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
     }
 
     // si la raiz tiene un solo hijo, volver el hijo la raiz
-    if(raiz->entradas.size() == 1){
+    if(raiz->entradas.size() == 1 && !raiz->hoja){
         Nodo* del_raiz = raiz;
         raiz = raiz->entradas.front()->hijo;
+        raiz->padre = nullptr;
         delete del_raiz->entradas.front();
         delete del_raiz;
     }

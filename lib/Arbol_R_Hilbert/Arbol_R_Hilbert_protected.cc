@@ -35,12 +35,12 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
         nodos.push_back(e->hijo);
         epsilon.insert(epsilon.end(), e->hijo->entradas.begin(), e->hijo->entradas.end());
         // Contar cuantos nodos tendrían underflow
-        if(e->hijo->entradas.size() <= m)
+        if(e->hijo->entradas.size() == m)
             nodos_defecto++;
     }
 
     // Si todos están en el limite inferior
-    if(nodos_defecto >= nodos.size()){
+    if(nodos_defecto == nodos.size() - 1){
         nodos.pop_back();
         nodos.back()->padre->entradas.pop_back();
         cantidad_nodos--;
@@ -53,7 +53,7 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
 
     it_begin = epsilon.begin();
     // Distribucion
-    for (int i = 0; i < cantidad_nodos; i++){
+    for (int i = 0; i < nodos.size(); i++){
         it_end = next(it_begin, entradas_por_nodo + (entradas_sobrantes-- > 0));
         nodos[i]->entradas.clear();
         while (it_begin != it_end){
