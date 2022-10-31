@@ -145,8 +145,13 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
             P.push_front(PP);
         for(Nodo* p: P){
             no_nivel_raiz = no_nivel_raiz && p != raiz;
-            for(Entrada* e: p->entradas)
-                e->actualizar_valores();
+            if(p->padre != nullptr){
+                for(Entrada* e: p->padre->entradas){
+                    if(e->hijo == p){
+                        e->actualizar_valores();
+                    }
+                }
+            }
         }
         
         // A4

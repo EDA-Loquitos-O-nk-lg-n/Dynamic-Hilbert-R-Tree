@@ -96,17 +96,18 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     deque<Nodo*> S;
     if(L == raiz)
         S.push_back(L);
-    else
+    else {
         for(Entrada* e: L->padre->entradas){ // Ver si reorganizamos por entrada interna
-            if(e->hijo == L){
+            // if(e->hijo == L){
                 e->actualizar_valores();
-            }
+            // }
             S.push_back(e->hijo);
         }
-    // Agregar nueva hoja en caso sea hoja
-    if(NL != nullptr){
-        S.push_front(NL);
     }
+    // Agregar nueva hoja en caso sea hoja
+    if(NL != nullptr)
+        S.push_front(NL);
+    
     bool RS = ajustar_arbol(S, L, NL);
 
     // I4 
@@ -120,19 +121,22 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     }
 
     imprimir_nodo_indice_h(raiz);
-    cout<<endl;
+    std::cout<<endl;
 
 }
 void Arbol_R_Hilbert::imprimir_nodo_indice_h(Nodo* n){
     if(n->hoja){
+        std::cout<<'/';
         for(Entrada* e: n->entradas){
-            cout<<e->indice<<' ';
+            std::cout<<e->indice<<' ';
         }
-        cout<<'/'<<' ';
+        std::cout<<'/';
     }
     else{
         for(Entrada* e: n->entradas){
+        std::cout<<'/';
             imprimir_nodo_indice_h(e->hijo);
+        std::cout<<'/';
         }
     }
 }
