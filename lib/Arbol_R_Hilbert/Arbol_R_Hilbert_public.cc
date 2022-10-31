@@ -45,7 +45,25 @@ Arbol_R_Hilbert::~Arbol_R_Hilbert() {
 }
 
 vector<Arbol_R_Hilbert::Distante> Arbol_R_Hilbert::buscar(Punto R, int k) {
-    return vector<Distante>();
+    priority_queue<Arbol_R_Hilbert::Distante, deque<Arbol_R_Hilbert::Distante>, greater<Arbol_R_Hilbert::Distante>> knn_lista;
+    for(int i = 0; i<raiz->entradas.size(); i++){
+        knn_lista.push({raiz->entradas[i], R, raiz});
+    }
+
+    vector<Arbol_R_Hilbert::Distante> resultados;
+    while(resultados.size() < k && !knn_lista.empty()){
+        if(knn_lista.top().nodo->hoja){
+            resultados.push_back(knn_lista.top());
+            knn_lista.pop();
+        }
+        else{
+            Entrada* ET = knn_lista.top().entrada;
+            knn_lista.pop();
+            for(int i = 0; i<ET->hijo->entradas.size(); i++)
+                knn_lista.push({ET->hijo->entradas[i], R, ET->hijo});
+        }
+    }
+    return resultados;
 }
 
 void Arbol_R_Hilbert::eliminar(Punto R) {

@@ -162,3 +162,16 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
 
     return S.size() > 1;
 }
+
+bool operator<(const Arbol_R_Hilbert::Distante &pd1, const Arbol_R_Hilbert::Distante &pd2){
+    return pd1.distancia < pd2.distancia;
+}
+bool operator>(const Arbol_R_Hilbert::Distante &pd1, const Arbol_R_Hilbert::Distante &pd2){
+    return pd1.distancia>pd2.distancia;
+}
+bool operator<=(const Arbol_R_Hilbert::Distante &pd1, const Arbol_R_Hilbert::Distante &pd2){
+    return pd1.distancia<=pd2.distancia;
+}
+bool operator>=(const Arbol_R_Hilbert::Distante &pd1, const Arbol_R_Hilbert::Distante &pd2){
+    return pd1.distancia>=pd2.distancia;
+}

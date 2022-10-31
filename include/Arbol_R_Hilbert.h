@@ -5,6 +5,7 @@
 #include<unordered_set>
 #include<vector>
 #include<deque>
+#include<queue>
 #include<cmath>
 #include"Punto.h"
 #include"Entrada.h"
@@ -31,6 +32,10 @@ public:
     vector<Distante> buscar(Punto R, int k);
     void imprimir_nodo_indice_h(Nodo* n);
 protected:
+    friend bool operator<(const Distante &pd1, const Distante &pd2);
+    friend bool operator>(const Distante &pd1, const Distante &pd2);
+    friend bool operator<=(const Distante &pd1, const Distante &pd2);
+    friend bool operator>=(const Distante &pd1, const Distante &pd2);
     Nodo* escoger_hoja(Entrada* R, int h);
     Nodo* manejar_desborde(Nodo* N, Entrada* r);
     bool ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN);
