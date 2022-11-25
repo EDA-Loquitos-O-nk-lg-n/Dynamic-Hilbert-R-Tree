@@ -1,6 +1,46 @@
 #include "../../include/Arbol_R_Hilbert.h"
 
-Arbol_R_Hilbert::Distante::~Distante(){}
+
+bool Arbol_R_Hilbert::buscar_exacto(const vector<Punto>& Ps){
+    Entrada verificadora{Ps};
+
+    queue<Nodo*> cola;
+    cola.push(raiz);
+    while(!cola.empty()){
+        if(cola.front()->hoja){
+            for(Entrada* e: cola.front()->entradas){
+                if(Ps.size() != e->objeto.size()){
+                    continue;
+                }
+
+                bool iguales = true;
+                for (int i_punto = 0; i_punto < Ps.size(); i_punto++){
+                    if(Ps[i_punto].x != e->objeto[i_punto].x || Ps[i_punto].y != e->objeto[i_punto].y){
+                        iguales = false;
+                        break;
+                    }
+                }
+                if(iguales){
+                    return true;
+                }                
+            }
+        }
+        else{
+            for(Entrada* e: cola.front()->entradas){
+                if(!e->dentro(verificadora.intervalos[0].menor, verificadora.intervalos[1].menor) 
+                    || !e->dentro(verificadora.intervalos[0].mayor, verificadora.intervalos[1].mayor)){
+                        continue;
+                    }
+                cola.push(e->hijo);
+            }
+        }
+        cola.pop();
+    }
+    return false;
+}
+
+
+Arbol_R_Hilbert::Distante::~Distante() = default;
 
 Arbol_R_Hilbert::Distante::Distante(Entrada* E, Punto P, Nodo *N): entrada(E), nodo(N){
     if(!N->hoja){
@@ -41,7 +81,7 @@ Arbol_R_Hilbert::Distante::Distante(Entrada* E, Punto P, Nodo *N): entrada(E), n
 Arbol_R_Hilbert::Arbol_R_Hilbert(): raiz(new Nodo{true, nullptr}) {}
 
 Arbol_R_Hilbert::~Arbol_R_Hilbert() {
-    delete raiz;
+    destruir_recursivo(raiz);
 }
 
 vector<Arbol_R_Hilbert::Distante> Arbol_R_Hilbert::buscar(Punto R, int k) {
@@ -158,8 +198,8 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
         raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC2 ,comparar_entrada), RC2);
     }
 
-    imprimir_nodo_indice_h(raiz);
-    std::cout<<endl;
+    // imprimir_nodo_indice_h(raiz);
+    // std::cout<<endl;
 
 }
 void Arbol_R_Hilbert::imprimir_nodo_indice_h(Nodo* n){

@@ -30,6 +30,7 @@ public:
         Nodo* nodo;
     };
     vector<Distante> buscar(Punto R, int k);
+    bool buscar_exacto(const vector<Punto>& Ps);
     void imprimir_nodo_indice_h(Nodo* n);
 protected:
     friend bool operator<(const Distante &pd1, const Distante &pd2);
@@ -41,6 +42,7 @@ protected:
     Nodo* manejar_desborde_defecto(Nodo* N, bool &combinado);
     bool ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN);
 private:
+    void destruir_recursivo(Nodo* N);
     static bool comparar_entrada(Entrada* a, Entrada *b);
     Nodo* raiz;
 

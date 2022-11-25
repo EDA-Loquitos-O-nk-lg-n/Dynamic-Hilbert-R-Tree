@@ -24,6 +24,7 @@ struct Entrada{
     Entrada(const vector<Punto> &P);
     vector<Punto> objeto;
 
+    bool dentro(int x, int y);
 
     ~Entrada();
 };
