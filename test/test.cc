@@ -70,7 +70,7 @@ static void T_B(){
     int n_figuras_por_batch = 1000;
     // int n_figuras_por_batch = 10;
     ofstream of("T_B.csv", ofstream::out);
-    vector<Punto> polis[1000];
+    vector<Punto> polis[n_figuras_por_batch];
     for (int i = 1; i <= 5; i++)
     {
         of<<i;
