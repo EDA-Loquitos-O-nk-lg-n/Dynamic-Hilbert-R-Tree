@@ -34,6 +34,10 @@ void Interfaz::ingresar_coordenada(sf::Event &event)
     }
 }
 
+void Interfaz::setArbol(Arbol_R_Hilbert* a){
+    arbol_r = a;
+}
+
 void Interfaz::ingresar_poligono(sf::Event &event)
 {
     cout << "INSERCION DE POLIGONO:" << endl;

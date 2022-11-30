@@ -7,14 +7,12 @@ Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada *R, int h) {
     // C2
     while(!N->hoja){
         // C3
-        int indice_mayor{};
-        const Entrada* E{N->entradas[indice_mayor]};
-        while(indice_mayor < N->entradas.size()-1 && E->indice <= h){
-            indice_mayor++;
-            E = N->entradas[indice_mayor];
+        std::multiset<Entrada *, cmp_Entrada>::const_iterator i_E = N->entradas.upper_bound(R);
+        if(i_E == N->entradas.end()){
+            --i_E;
         }
         // C4
-        N = E->hijo;
+        N = i_E.operator*()->hijo;
     }
 
     return N;
@@ -42,7 +40,9 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
     // Si todos están en el limite inferior
     if(nodos_defecto == nodos.size() - 1){
         nodos.pop_back();
-        nodos.back()->padre->entradas.pop_back();
+        nodos.back()->padre->entradas.erase(
+            --nodos.back()->padre->entradas.end()
+        );
         cantidad_nodos--;
         combinado = cantidad_nodos < m;
     }
@@ -59,7 +59,7 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
         while (it_begin != it_end){
             if((*it_begin)->hijo != nullptr)
                 (*it_begin)->hijo->padre = nodos[i];
-            nodos[i]->entradas.push_back(*it_begin);
+            nodos[i]->entradas.insert(*it_begin);
             it_begin++;
         }
     }
@@ -85,11 +85,11 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_exceso(Nodo *N, Entrada *r) {
     int residuo_entradas;
     // Nodos vecinoso
     vector<Nodo*> nodos;
-    vector<Entrada*>::iterator it_begin, it_end;
+    list<Entrada*>::iterator it_begin, it_end;
 
     // H1
     // Contenedor que almacena todas las entradas de los vecinos al nivel del nodo N
-    vector<Entrada*> epsilon;
+    list<Entrada*> epsilon;
     // Si el nodo N no es la raiz
     if(N!=raiz){
         // Iterar por todos los hijos del padre de N
@@ -141,17 +141,19 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_exceso(Nodo *N, Entrada *r) {
     // Iterar por todos los nodos
     for(int i = 0; i<nodos.size(); i++){
         // Iterador final
-        it_end = next(it_begin, cantidad_entradas + (residuo_entradas-- > 0));
+        bool hay_residuos = residuo_entradas > 0;
+        it_end = next(it_begin, cantidad_entradas + hay_residuos);
+        residuo_entradas--;
         // Remover todas las entradas del nodo i
         nodos[i]->entradas.clear();
-        // Procesar cada entrada del intervalo hasta llegar al interador final
+        // Procesar cada entrada del intervalo hasta llegar al interador final  
         while (it_begin != it_end)
         {
             // reasignar padre
             if((*it_begin)->hijo != nullptr)
                 (*it_begin)->hijo->padre = nodos[i];
             // Insertar la entrada al nodo i
-            nodos[i]->entradas.push_back(*it_begin);
+            nodos[i]->entradas.insert(*it_begin);
             // Siguiente entrada
             it_begin++;
         }
@@ -167,8 +169,9 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
     bool no_nivel_raiz {N != raiz};
 
     // A1
-    // Mientras los nodos no estén en el nivel de la raizs
+    // Mientras los nodos no estén en el nivel de la raiz
     while(no_nivel_raiz){
+        bool hubo_redistribucion = false;
         // Definir como nulo
         PP = nullptr;
         // Nodo padre de N y vecinos
@@ -183,11 +186,13 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
                 // Cambiamos el padre del nodo NN como N_p
                 E_NN->hijo->padre = N_p;
                 // Insertar la entrada de acuerdo al indice Hilbert
-                N_p->entradas.insert(lower_bound(N_p->entradas.begin(), N_p->entradas.end(), E_NN, comparar_entrada), E_NN);
+                N_p->entradas.insert(E_NN);
             }
             // Si el padre está lleno
-            else
+            else{
                 PP = manejar_desborde_exceso(N_p, E_NN);
+                hubo_redistribucion = true;
+            }
         }
 
         // A3
@@ -199,7 +204,7 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
             no_nivel_raiz = no_nivel_raiz && p != raiz;
             if(p->padre != nullptr){
                 for(Entrada* e: p->padre->entradas){
-                    if(e->hijo == p){
+                    if(hubo_redistribucion || e->hijo == p){
                         e->actualizar_valores();
                     }
                 }

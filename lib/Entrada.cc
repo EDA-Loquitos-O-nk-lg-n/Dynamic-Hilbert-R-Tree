@@ -7,6 +7,10 @@ Entrada::Entrada(Nodo* H): hijo(H){
     actualizar_valores();
 }
 
+bool cmp_Entrada::operator()(Entrada* a, Entrada* b){
+    return a->indice < b->indice;
+}
+
 bool Entrada::dentro(int x, int y){
     bool en_x = intervalos[0].menor <= x && x <= intervalos[0].mayor;
     bool en_y = intervalos[1].menor <= y && y <= intervalos[1].mayor;

@@ -1,5 +1,23 @@
 #include "../../include/Arbol_R_Hilbert.h"
 
+bool Arbol_R_Hilbert::cumplir_intervalos(){
+    if(raiz->hoja) return true;
+    Nodo* N = raiz;
+    function<bool(Entrada*)> verificar = [&verificar](Entrada* e){
+        for(Entrada* ie: e->hijo->entradas){
+            if(
+                !e->dentro(ie->intervalos[0].menor, ie->intervalos[1].menor) ||
+                !e->dentro(ie->intervalos[0].mayor, ie->intervalos[1].mayor)
+            ){
+                return false;
+            }
+        }
+        for(Entrada* ie: e->hijo->entradas){
+            
+        }
+        return true;
+    };
+}
 
 bool Arbol_R_Hilbert::buscar_exacto(const vector<Punto>& Ps){
     Entrada verificadora{Ps};
@@ -39,7 +57,6 @@ bool Arbol_R_Hilbert::buscar_exacto(const vector<Punto>& Ps){
     return false;
 }
 
-
 Arbol_R_Hilbert::Distante::~Distante() = default;
 
 Arbol_R_Hilbert::Distante::Distante(Entrada* E, Punto P, Nodo *N): entrada(E), nodo(N){
@@ -78,7 +95,7 @@ Arbol_R_Hilbert::Distante::Distante(Entrada* E, Punto P, Nodo *N): entrada(E), n
     }
 }
 
-Arbol_R_Hilbert::Arbol_R_Hilbert(): raiz(new Nodo{true, nullptr}) {}
+Arbol_R_Hilbert::Arbol_R_Hilbert(): raiz(new Nodo{true, nullptr}), objetos(0) {}
 
 Arbol_R_Hilbert::~Arbol_R_Hilbert() {
     destruir_recursivo(raiz);
@@ -86,8 +103,8 @@ Arbol_R_Hilbert::~Arbol_R_Hilbert() {
 
 vector<Arbol_R_Hilbert::Distante> Arbol_R_Hilbert::buscar(Punto R, int k) {
     priority_queue<Arbol_R_Hilbert::Distante, deque<Arbol_R_Hilbert::Distante>, greater<Arbol_R_Hilbert::Distante>> knn_lista;
-    for(int i = 0; i<raiz->entradas.size(); i++){
-        knn_lista.push({raiz->entradas[i], R, raiz});
+    for(Entrada* rent: raiz->entradas){
+        knn_lista.push({rent, R, raiz});
     }
 
     vector<Arbol_R_Hilbert::Distante> resultados;
@@ -99,8 +116,9 @@ vector<Arbol_R_Hilbert::Distante> Arbol_R_Hilbert::buscar(Punto R, int k) {
         else{
             Entrada* ET = knn_lista.top().entrada;
             knn_lista.pop();
-            for(int i = 0; i<ET->hijo->entradas.size(); i++)
-                knn_lista.push({ET->hijo->entradas[i], R, ET->hijo});
+            for(Entrada* ent: ET->hijo->entradas){
+                knn_lista.push({ent, R, ET->hijo});
+            }
         }
     }
     return resultados;
@@ -116,7 +134,7 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
     Nodo* L = cerca.nodo;
 
     // D2
-    vector<Entrada *>::iterator it_borrado = find(L->entradas.begin(), L->entradas.end(), E);
+    multiset<Entrada *>::iterator it_borrado = find(L->entradas.begin(), L->entradas.end(), E);
     delete *it_borrado;
     L->entradas.erase(it_borrado);
 
@@ -144,15 +162,16 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
     // si la raiz tiene un solo hijo, volver el hijo la raiz
     if(raiz->entradas.size() == 1 && !raiz->hoja){
         Nodo* del_raiz = raiz;
-        raiz = raiz->entradas.front()->hijo;
+        raiz = raiz->entradas.begin().operator*()->hijo;
         raiz->padre = nullptr;
-        delete del_raiz->entradas.front();
+        delete del_raiz->entradas.begin().operator*();
         delete del_raiz;
     }
 }
 
 void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     Nodo* NL = nullptr;
+    bool hubo_redistribucion = false;
 
     // I1
     // Creamos una entrada utilizando el objeto R ingresado
@@ -163,11 +182,13 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
     // Si el nodo no esta lleno
     if(L->entradas.size() < M){
         // Insertar el nuevo objeto en orden de acuerdo al indice Hilbert
-        L->entradas.insert(lower_bound(L->entradas.begin(),L->entradas.end(),r,comparar_entrada), r);
+        L->entradas.insert(r);
+        // L->entradas.insert(lower_bound(L->entradas.begin(),L->entradas.end(),r,comparar_entrada), r);
     }
     // Si está lleno
     else{
         NL = manejar_desborde_exceso(L, r);
+        hubo_redistribucion = true;
     }
     
     // I3
@@ -176,9 +197,9 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
         S.push_back(L);
     else {
         for(Entrada* e: L->padre->entradas){ // Ver si reorganizamos por entrada interna
-            // if(e->hijo == L){
+            if(hubo_redistribucion || e->hijo == L ){
                 e->actualizar_valores();
-            // }
+            }
             S.push_back(e->hijo);
         }
     }
@@ -194,27 +215,42 @@ void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
         S[0]->padre = raiz;
         S[1]->padre = raiz;
         Entrada *RC1 = new Entrada{S[0]}, *RC2 = new Entrada{S[1]};
-        raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC1 ,comparar_entrada), RC1);
-        raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC2 ,comparar_entrada), RC2);
+        // raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC1 ,comparar_entrada), RC1);
+        raiz->entradas.insert(RC1);
+        // raiz->entradas.insert(lower_bound(raiz->entradas.begin(),raiz->entradas.end(), RC2 ,comparar_entrada), RC2);
+        raiz->entradas.insert(RC2);
     }
 
     // imprimir_nodo_indice_h(raiz);
     // std::cout<<endl;
+    objetos++;
 
 }
 void Arbol_R_Hilbert::imprimir_nodo_indice_h(Nodo* n){
-    if(n->hoja){
+    if(n == raiz)
+    cout<<"ARBOL:"<<endl;
+    if(!n->hoja){
         std::cout<<'/';
         for(Entrada* e: n->entradas){
-            std::cout<<e->indice<<' ';
+            // std::cout<<e->indice<<' ';
+            printf("x E [%d, %d], y E [%d, %d]\n", 
+                e->intervalos[0].menor, e->intervalos[0].mayor,
+                e->intervalos[1].menor, e->intervalos[1].mayor
+            );
+            imprimir_nodo_indice_h(e->hijo);
         }
-        std::cout<<'/';
+        // std::cout<<'/';
     }
     else{
         for(Entrada* e: n->entradas){
-        std::cout<<'/';
-            imprimir_nodo_indice_h(e->hijo);
-        std::cout<<'/';
+            printf("x E [%d, %d], y E [%d, %d] ////// \n", 
+                e->intervalos[0].menor, e->intervalos[0].mayor,
+                e->intervalos[1].menor, e->intervalos[1].mayor
+            );
+            
+        // std::cout<<'/';
+            // imprimir_nodo_indice_h(e->hijo);
+        // std::cout<<'/';
         }
     }
 }

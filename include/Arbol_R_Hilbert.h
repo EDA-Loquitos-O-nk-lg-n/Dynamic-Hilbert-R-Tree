@@ -6,6 +6,8 @@
 #include<vector>
 #include<deque>
 #include<queue>
+#include<list>
+#include<functional>
 #include<cmath>
 #include"Punto.h"
 #include"Entrada.h"
@@ -32,6 +34,7 @@ public:
     vector<Distante> buscar(Punto R, int k);
     bool buscar_exacto(const vector<Punto>& Ps);
     void imprimir_nodo_indice_h(Nodo* n);
+    bool cumplir_intervalos();
 protected:
     friend bool operator<(const Distante &pd1, const Distante &pd2);
     friend bool operator>(const Distante &pd1, const Distante &pd2);
@@ -45,6 +48,7 @@ private:
     void destruir_recursivo(Nodo* N);
     static bool comparar_entrada(Entrada* a, Entrada *b);
     Nodo* raiz;
+    int objetos;
 
     friend class Interfaz;
 };

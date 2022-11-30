@@ -22,6 +22,7 @@ public:
      * @brief Ejecuta el renderizado del objeto sf::RenderWindow
      * 
      */
+    void setArbol(Arbol_R_Hilbert* a);
     void ejecutar();
 
 protected:
