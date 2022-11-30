@@ -19,11 +19,11 @@ bool Entrada::dentro(int x, int y){
 
 Entrada::Entrada(const vector<Punto> &R)
 : objeto(R), hijo(nullptr){
-    indice = Funciones_Hilbert::xy2d(N, R[0].x / D, R[0].y / D);
+    indice = Funciones_Hilbert::xy2d(N / D, R[0].x / D, R[0].y / D);
     intervalos[0] = {numeric_limits<int>::max(), numeric_limits<int>::min()};
     intervalos[1] = {numeric_limits<int>::max(), numeric_limits<int>::min()};
     for(Punto i : R){
-        indice = max(indice, Funciones_Hilbert::xy2d(N, i.x / D, i.y / D));
+        indice = max(indice, Funciones_Hilbert::xy2d(N/D, i.x / D, i.y / D));
         intervalos[0].menor = min(intervalos[0].menor, i.x);
         intervalos[1].menor = min(intervalos[1].menor, i.y);
         intervalos[0].mayor = max(intervalos[0].mayor, i.x);

@@ -35,6 +35,38 @@ vector<Punto> generar_poligono(){
     return P;
 }
 
+static void sobrelapamiento(){
+    for(D = 1; D<=N; D*=2){
+        ofstream of("Solapamiento_"+to_string(D)+".csv", ofstream::out);
+        of<<"Total,Hoja\n";
+        // for(int t = 0; t<1; t++){
+        for(int t = 0; t<100; t++){
+            Arbol_R_Hilbert* a = new Arbol_R_Hilbert;
+
+            for(int b = 0; b<5000; b++){
+                a->insertar(generar_poligono());
+            }
+
+            of<<fixed<<a->obtener_sobrelapado_total()<<',';
+
+            int H = a->retornar_altura();
+            for(int h =H; h>=1; h--){
+                of<<fixed<<a->obtener_sobrelapado(h);
+                if(h >1 )
+                    of<<',';
+            }
+
+
+            of<<'\n';
+
+            cout<<D<<": "<<t+1<<'\n';
+
+            delete a;
+        }
+        of.close();
+    }
+}
+
 static void T_I(){
     ofstream of("T_I.csv", ofstream::out);
     for(int i = 0; i<500; i++){
@@ -200,5 +232,5 @@ static void T_K(){
 }
 
 int main(){
-    T_B();
+    sobrelapamiento();
 }
