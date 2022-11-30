@@ -296,13 +296,12 @@ void Arbol_R_Hilbert::eliminar(Punto R) {
     }
 }
 
-void Arbol_R_Hilbert::insertar(const vector<Punto> &R) {
+void Arbol_R_Hilbert::insertar(const vector<Punto> &R, int D) {
     Nodo* NL = nullptr;
     bool hubo_redistribucion = false;
-
     // I1
     // Creamos una entrada utilizando el objeto R ingresado
-    Entrada* r = new Entrada{R};
+    Entrada* r = new Entrada{R, D};
     Nodo* L = escoger_hoja(r, r->indice);
 
     // I2

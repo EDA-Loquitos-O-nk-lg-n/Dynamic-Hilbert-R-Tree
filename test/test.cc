@@ -35,8 +35,8 @@ vector<Punto> generar_poligono(){
     return P;
 }
 
-static void sobrelapamiento(){
-    for(D = 1; D<=N; D*=2){
+void sobrelapamiento(){
+    for(int D = 1; D<=4; D*=2){
         ofstream of("Solapamiento_"+to_string(D)+".csv", ofstream::out);
         of<<"Total,Hoja\n";
         // for(int t = 0; t<1; t++){
@@ -44,7 +44,7 @@ static void sobrelapamiento(){
             Arbol_R_Hilbert* a = new Arbol_R_Hilbert;
 
             for(int b = 0; b<5000; b++){
-                a->insertar(generar_poligono());
+                a->insertar(generar_poligono(), D);
             }
 
             of<<fixed<<a->obtener_sobrelapado_total()<<',';

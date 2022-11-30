@@ -21,7 +21,7 @@ struct Entrada{
 
 
     // Entrada nodo hoja
-    Entrada(const vector<Punto> &P);
+    Entrada(const vector<Punto> &P, int D=8);
     vector<Punto> objeto;
 
     bool dentro(int x, int y);

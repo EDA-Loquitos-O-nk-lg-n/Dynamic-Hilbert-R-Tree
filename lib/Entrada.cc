@@ -17,7 +17,7 @@ bool Entrada::dentro(int x, int y){
     return en_x && en_y;
 }
 
-Entrada::Entrada(const vector<Punto> &R)
+Entrada::Entrada(const vector<Punto> &R, int D)
 : objeto(R), hijo(nullptr){
     indice = Funciones_Hilbert::xy2d(N / D, R[0].x / D, R[0].y / D);
     intervalos[0] = {numeric_limits<int>::max(), numeric_limits<int>::min()};

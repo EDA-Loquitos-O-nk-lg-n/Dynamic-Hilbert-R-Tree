@@ -22,7 +22,7 @@ class Arbol_R_Hilbert{
 public:
     Arbol_R_Hilbert();
     ~Arbol_R_Hilbert();
-    void insertar(const vector<Punto> &R);
+    void insertar(const vector<Punto> &R, int D=8);
     void eliminar(Punto R);
     struct Distante{
         Distante(Entrada* E, Punto P, Nodo *N);
