@@ -36,7 +36,7 @@ vector<Punto> generar_poligono(){
 }
 
 void sobrelapamiento(){
-    for(int D = 1; D<=4; D*=2){
+    for(int D = 128; D<=128; D*=2){
         ofstream of("Solapamiento_"+to_string(D)+".csv", ofstream::out);
         of<<"Total,Hoja\n";
         // for(int t = 0; t<1; t++){
@@ -151,7 +151,7 @@ static void T_D(){
 
     for(int i = 0; i<5; i++){
         of<<i+1;
-        if(i == 5)
+        if(i == 4)
             of<<'\n';
         else
             of<<',';
@@ -232,5 +232,6 @@ static void T_K(){
 }
 
 int main(){
-    sobrelapamiento();
+    T_D();
+    T_B();
 }
