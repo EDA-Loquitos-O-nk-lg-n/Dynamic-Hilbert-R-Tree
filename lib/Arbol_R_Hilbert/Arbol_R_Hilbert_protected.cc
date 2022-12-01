@@ -1,17 +1,19 @@
 #include "../../include/Arbol_R_Hilbert.h"
 
 Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada *R, int h) {
-    // C1
+    // C1 Definir N como la raiz
     Nodo* N{raiz};
 
-    // C2
+    // C2 Mientras N no sea una Hoja
     while(!N->hoja){
-        // C3
+        // C3 Hallar el primer valor indice de hilbert que sea mayor a la entrada
         std::multiset<Entrada *, cmp_Entrada>::const_iterator i_E = N->entradas.upper_bound(R);
+        // En caso no hallan mayores
         if(i_E == N->entradas.end()){
+            // Quedarse con la última entrada
             --i_E;
         }
-        // C4
+        // C4 Repetir el ciclo con el nodo que apunta la entraad seleccionada
         N = i_E.operator*()->hijo;
     }
 
@@ -19,18 +21,26 @@ Nodo *Arbol_R_Hilbert::escoger_hoja(Entrada *R, int h) {
 }
 
 Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
+    // Cantidad de nodos
     int cantidad_nodos = N->padre->entradas.size();
-    // int cantidad_nodos = (N==raiz?1:N->padre->entradas.size());
+    // Cantidad de nodos que se encuentran con la minima cantidad de entradsa
     int nodos_defecto = 0;
+    // Contador de entradas en todos los nodos vecinos
     int entradas_por_nodo;
+    // Residuo al distruibuir equitativamente las entradas en los nodos
     int entradas_sobrantes;
+
+    // Almacenar todos los nodos
     vector<Nodo*> nodos;
     vector<Entrada*>::iterator it_begin, it_end;
 
     // Obtener todos las entradas de los nodos vecinos
     vector<Entrada*> epsilon;
+    // Iterar por las entradas del padre, que serían los vecinos de N
     for(Entrada* e: N->padre->entradas){
+        // Agregar vecino al almacen
         nodos.push_back(e->hijo);
+        // Agregar todas las entradas al contenedor
         epsilon.insert(epsilon.end(), e->hijo->entradas.begin(), e->hijo->entradas.end());
         // Contar cuantos nodos tendrían underflow
         if(e->hijo->entradas.size() == m)
@@ -39,6 +49,7 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_defecto(Nodo* N, bool &combinado){
 
     // Si todos están en el limite inferior
     if(nodos_defecto == nodos.size() - 1){
+        // Eliminar el último nodo
         nodos.pop_back();
         nodos.back()->padre->entradas.erase(
             --nodos.back()->padre->entradas.end()
@@ -135,6 +146,7 @@ Nodo* Arbol_R_Hilbert::manejar_desborde_exceso(Nodo *N, Entrada *r) {
     // Distribuir entre todos los nodos
     // Calcular cuantas entradas tendrá cada nodo
     cantidad_entradas = epsilon.size() / cantidad_nodos;
+    // Calcular cuantas entradas sobran
     residuo_entradas = epsilon.size() % cantidad_nodos;
     // Inicio del iterator inicial para el primer nodo
     it_begin = epsilon.begin();
@@ -211,9 +223,11 @@ bool Arbol_R_Hilbert::ajustar_arbol(deque<Nodo*> &S, Nodo* N, Nodo* NN) {
             }
         }
         
-        // A4
+        // A4: Pasar al nodo padre
         N = N_p;
+        // En caso el padre deba agregar una entrada interna
         NN = PP;
+        // Conjunto que almacenará todos los noso dpadre
         S = P;
     }
 

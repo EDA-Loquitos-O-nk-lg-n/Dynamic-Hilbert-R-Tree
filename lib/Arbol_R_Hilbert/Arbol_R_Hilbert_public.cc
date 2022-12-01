@@ -2,15 +2,21 @@
 
 int Arbol_R_Hilbert::retornar_altura(){
     int altura = 0;
+    // Ubicarse en la raiz
     Nodo* N = raiz;
+    // Mientras no se llegue a un nodo hoja
     while(!N->hoja){
+        // Bajar por las ramas del arbol
         N = N->entradas.begin().operator*()->hijo;
+        // Incrementar la altura
         altura++;
     }
+    // Retornar el valor de la altura
     return altura;
 }
 
 double Arbol_R_Hilbert::obtener_sobrelapado_total(){
+    // 
     double area_total=0, area_sobrelapada=0;
 
     set<int> seg_set_x, seg_set_y;
