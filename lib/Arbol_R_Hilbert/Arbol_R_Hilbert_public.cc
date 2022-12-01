@@ -16,7 +16,6 @@ int Arbol_R_Hilbert::retornar_altura(){
 }
 
 double Arbol_R_Hilbert::obtener_sobrelapado_total(){
-    // 
     double area_total=0, area_sobrelapada=0;
 
     set<int> seg_set_x, seg_set_y;
