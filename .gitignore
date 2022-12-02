@@ -2,7 +2,6 @@
 *.d
 
 src/main
-.vscode/
 /test/*.csv
 /test/T_B.csv
 /test/test
